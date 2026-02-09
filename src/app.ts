@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import mahasiswaRoutes from './routes/mahasiswa.route';
 import projectRoutes from './routes/project.route';
 import anythingRoutes from './routes/anything.route';
+import authRoutes from './routes/auth.route';
+import authMiddleware from './middlewares/auth.middleware';
 
 dotenv.config();
 
@@ -28,6 +30,9 @@ app.get('/', (_req, res) => {
 app.get('/ping', (_req, res) => {
   res.status(200).send('pong');
 });
+
+app.use('/auth', authRoutes);
+app.use(authMiddleware);
 
 app.use('/mahasiswa', mahasiswaRoutes);
 app.use('/projects', projectRoutes);
