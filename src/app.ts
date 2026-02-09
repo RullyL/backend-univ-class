@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mahasiswaRoutes from './routes/mahasiswa.route';
+import projectRoutes from './routes/project.route';
+import anythingRoutes from './routes/anything.route';
 
 dotenv.config();
 
@@ -28,5 +30,7 @@ app.get('/ping', (_req, res) => {
 });
 
 app.use('/mahasiswa', mahasiswaRoutes);
+app.use('/projects', projectRoutes);
+app.use('/anything', anythingRoutes);
 
 export default app;

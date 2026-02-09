@@ -16,3 +16,21 @@ model Mahasiswa {
   foto      String?
   createdAt DateTime @default(now())
 }
+
+model ProjectAssignment {
+  id           String   @id @default(uuid())
+  person       String
+  project      String
+  role         String?
+  fotoProject  String?
+  createdAt    DateTime @default(now())
+}
+
+model Anything {
+  id           String   @id @default(uuid())
+  title        String
+  note         String
+  activityDate DateTime
+  image        String?
+  createdAt    DateTime @default(now())
+}
