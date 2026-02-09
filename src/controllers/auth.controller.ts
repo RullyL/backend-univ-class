@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { type Secret, type SignOptions } from 'jsonwebtoken';
 import { successResponse, errorResponse } from '../utils/response';
 
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change';
+const JWT_SECRET: Secret = process.env.JWT_SECRET || 'dev-secret-change';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 const login = (req: Request, res: Response) => {
@@ -18,11 +18,10 @@ const login = (req: Request, res: Response) => {
       return errorResponse(res, 'Invalid credentials', 401);
     }
 
-    const token = jwt.sign(
-      { sub: 'admin', role: 'admin', username },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
-    );
+    const signOptions: SignOptions = {
+      expiresIn: JWT_EXPIRES_IN as SignOptions['expiresIn'],
+    };
+    const token = jwt.sign({ sub: 'admin', role: 'admin', username }, JWT_SECRET, signOptions);
 
     return successResponse(res, 'Login success', { token, expiresIn: JWT_EXPIRES_IN });
   } catch (err: any) {
