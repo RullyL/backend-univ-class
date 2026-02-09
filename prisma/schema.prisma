@@ -15,14 +15,16 @@ model Mahasiswa {
   project   String?
   foto      String?
   createdAt DateTime @default(now())
+  projects  ProjectAssignment[]
 }
 
 model ProjectAssignment {
   id           String   @id @default(uuid())
-  person       String
   project      String
   role         String?
   fotoProject  String?
+  mahasiswaId  String?
+  mahasiswa    Mahasiswa? @relation(fields: [mahasiswaId], references: [id])
   createdAt    DateTime @default(now())
 }
 

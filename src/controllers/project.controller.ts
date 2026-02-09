@@ -30,10 +30,10 @@ const getById = async (req: Request, res: Response) => {
 
 const create = async (req: Request, res: Response) => {
   try {
-    const { person, project, role } = req.body ?? {};
+    const { mahasiswaId, project, role } = req.body ?? {};
     const fotoProject = req.file ?? undefined;
     const data = await projectService.create({
-      person,
+      mahasiswaId,
       project,
       role,
       fotoProject,
@@ -51,10 +51,10 @@ const update = async (req: Request, res: Response) => {
     if (!id) {
       return errorResponse(res, 'Invalid id', 400);
     }
-    const { person, project, role } = req.body ?? {};
+    const { mahasiswaId, project, role } = req.body ?? {};
     const fotoProject = req.file ?? undefined;
     const data = await projectService.update(id, {
-      person,
+      mahasiswaId,
       project,
       role,
       fotoProject,

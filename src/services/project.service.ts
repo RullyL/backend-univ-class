@@ -2,7 +2,7 @@ import projectRepository from '../repositories/project.repository';
 import { uploadImage } from '../utils/blob';
 
 type ProjectPayload = {
-  person?: string;
+  mahasiswaId?: string;
   project?: string;
   role?: string;
   fotoProject?: Express.Multer.File;
@@ -13,9 +13,9 @@ const getAll = () => projectRepository.findAll();
 const getById = (id: string) => projectRepository.findById(id);
 
 const create = async (payload: ProjectPayload) => {
-  const { person, project, role, fotoProject } = payload;
-  if (!person || !project) {
-    throw new Error('person and project are required');
+  const { mahasiswaId, project, role, fotoProject } = payload;
+  if (!mahasiswaId || !project) {
+    throw new Error('mahasiswaId and project are required');
   }
 
   let fotoUrl: string | undefined;
@@ -24,10 +24,10 @@ const create = async (payload: ProjectPayload) => {
   }
 
   return projectRepository.create({
-    person,
     project,
     role: role || null,
     fotoProject: fotoUrl || null,
+    mahasiswaId,
   });
 };
 
@@ -41,10 +41,10 @@ const update = async (id: string, payload: ProjectPayload) => {
   }
 
   return projectRepository.update(id, {
-    person: payload.person ?? existing.person,
     project: payload.project ?? existing.project,
     role: payload.role ?? existing.role,
     fotoProject: fotoUrl,
+    mahasiswaId: payload.mahasiswaId ?? existing.mahasiswaId ?? null,
   });
 };
 
