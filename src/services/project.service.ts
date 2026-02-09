@@ -8,9 +8,15 @@ type ProjectPayload = {
   fotoProject?: Express.Multer.File;
 };
 
-const getAll = () => projectRepository.findAll();
+const getAll = async () => {
+  const rows = await projectRepository.findAll();
+  return rows.map(sanitizeProject);
+};
 
-const getById = (id: string) => projectRepository.findById(id);
+const getById = async (id: string) => {
+  const row = await projectRepository.findById(id);
+  return sanitizeProject(row);
+};
 
 const create = async (payload: ProjectPayload) => {
   const { mahasiswaId, project, role, fotoProject } = payload;
@@ -23,12 +29,13 @@ const create = async (payload: ProjectPayload) => {
     fotoUrl = await uploadImage(fotoProject, 'projects');
   }
 
-  return projectRepository.create({
+  const created = await projectRepository.create({
     project,
     role: role || null,
     fotoProject: fotoUrl || null,
     mahasiswaId,
   });
+  return sanitizeProject(created);
 };
 
 const update = async (id: string, payload: ProjectPayload) => {
@@ -40,18 +47,40 @@ const update = async (id: string, payload: ProjectPayload) => {
     fotoUrl = await uploadImage(payload.fotoProject, 'projects');
   }
 
-  return projectRepository.update(id, {
+  const updated = await projectRepository.update(id, {
     project: payload.project ?? existing.project,
     role: payload.role ?? existing.role,
     fotoProject: fotoUrl,
     mahasiswaId: payload.mahasiswaId ?? existing.mahasiswaId ?? null,
   });
+  return sanitizeProject(updated);
 };
 
 const remove = async (id: string) => {
   const existing = await projectRepository.findById(id);
   if (!existing) return null;
-  return projectRepository.remove(id);
+  const removed = await projectRepository.remove(id);
+  return sanitizeProject(removed);
 };
 
 export default { getAll, getById, create, update, remove };
+const maskNpm = (npm?: string | null) => {
+  if (!npm) return npm ?? null;
+  const visible = 2;
+  if (npm.length <= visible) return '*'.repeat(npm.length);
+  return '*'.repeat(npm.length - visible) + npm.slice(-visible);
+};
+
+const sanitizeProject = (row: any) => {
+  if (!row) return row;
+  if (row.mahasiswa) {
+    row = {
+      ...row,
+      mahasiswa: {
+        ...row.mahasiswa,
+        npm: maskNpm(row.mahasiswa.npm),
+      },
+    };
+  }
+  return row;
+};
